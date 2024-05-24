@@ -62,21 +62,6 @@ bool isPathClear(int srcX, int srcY, int destX, int destY) {
     }
     return true;
 }
-bool isKingInCheck(char king);
-
-bool willMovePutKingInCheck(int srcX, int srcY, int destX, int destY, char king) {
-    char originalPiece = board[destX][destY];
-    board[destX][destY] = board[srcX][srcY];
-    board[srcX][srcY] = ' ';
-
-    bool kingInCheck = isKingInCheck(king);
-    //printf("%i", kingInCheck);
-    // Przywróć pierwotną sytuację planszy
-    board[srcX][srcY] = board[destX][destY];
-    board[destX][destY] = originalPiece;
-
-    return kingInCheck;
-}
 
 void forceMovePiece(int srcX, int srcY, int destX, int destY);
 bool isWhiteInCheck();
@@ -86,7 +71,7 @@ bool isValidMove(int srcX, int srcY, int destX, int destY) {
     if (!isMoveInBounds(srcX, srcY, destX, destY)) return false;
     char piece = board[srcX][srcY];
     char dest = board[destX][destY];
-    if (dest == 'k' || dest == 'K') return false;
+    //if (dest == 'k' || dest == 'K') return false;
     if (piece == ' ') return false;
     if (!isOwnPiece(piece)) return false;
     if (isOwnPiece(dest)) return false;
@@ -171,11 +156,6 @@ bool isValidMove(int srcX, int srcY, int destX, int destY) {
 }
 
 bool movePiece(int srcX, int srcY, int destX, int destY) {
-    char king = (currentPlayer == 'W') ? 'k' : 'K';
-        bool hey = isKingInCheck(king);
-        if(hey){
-            printf("HELLO XD");
-        } 
     if (isValidMove(srcX, srcY, destX, destY)) {
         board[destX][destY] = board[srcX][srcY];
         board[srcX][srcY] = ' ';
@@ -196,77 +176,6 @@ void forceMovePiece(int srcX, int srcY, int destX, int destY) {
 void switchPlayer() {
     currentPlayer = (currentPlayer == 'W') ? 'B' : 'W';
 }
-
-bool isKingInCheck(char king) {
-    int kingX = -1, kingY = -1;
-    // Find the king's position
-    for (int i = 0; i < SIZE; i++) {
-        for (int j = 0; j < SIZE; j++) {
-            if (board[i][j] == king) {
-                kingX = i;
-                kingY = j;
-                
-                break;
-                
-            }
-        }
-        if (kingX != -1) break;
-    }
-    if (kingX == -1 || kingY == -1) {
-        printf("King not found on the board!\n");
-        return false;
-    }
-
-    // Check if any opponent piece can move to the king's position
-    bool isCheck = false;
-    for (int i = 0; i < SIZE; i++) {
-        for (int j = 0; j < SIZE; j++) {
-            if (isOpponentPiece(board[i][j])) {
-                //printf("%c %d %d \n",board[i][j], kingX, kingY);
-                bool validMove = isValidMove(i, j, kingX, kingY);
-                if(board[i][j] == 'q'){
-                    //printf("%d %d, %d %d, %c \n", i, j, kingX, kingY, board[i][j]);
-                    //printf("HAHA %d\n",isValidMove(i, j, kingX, kingY));
-                }
-                if (validMove) {
-                    printf("Opponent piece at (%d, %d) can move to the king's position (%d, %d).\n", i, j, kingX, kingY);
-                    isCheck = true;
-                }
-            }
-        }
-    }
-    return isCheck;
-}
-
-bool isCheckmate() {
-    char king = (currentPlayer == 'W') ? 'K' : 'k';
-    if (!isKingInCheck(king)) return false;
-
-    for (int i = 0; i < SIZE; i++) {
-        for (int j = 0; j < SIZE; j++) {
-            if (isOwnPiece(board[i][j])) {
-                for (int x = 0; x < SIZE; x++) {
-                    for (int y = 0; y < SIZE; y++) {
-                        char originalPiece = board[x][y];
-                        if (isValidMove(i, j, x, y)) {
-                            board[x][y] = board[i][j];
-                            board[i][j] = ' ';
-                            if (!isKingInCheck(king)) {
-                                board[i][j] = board[x][y];
-                                board[x][y] = originalPiece;
-                                return false;
-                            }
-                            board[i][j] = board[x][y];
-                            board[x][y] = originalPiece;
-                        }
-                    }
-                }
-            }
-        }
-    }
-    return true;
-}
-
 
 void drawBoard(SDL_Renderer *renderer) {
     // Clear the screen
@@ -395,7 +304,7 @@ bool isBlackInCheck(){
     printf("black king: %i\n",blackInCheck);
     return (bool)blackInCheck;
 }
-/*
+
 void isEitherKingInCheck(){
     findKings();
     int white[] = {kings[0][0], kings[0][1]};
@@ -420,7 +329,7 @@ void isEitherKingInCheck(){
     }
     printf("%i %i\n",whiteInCheck, blackInCheck);
 }
-*/
+
 int main(int argc, char *argv[]) {
     SDL_Init(SDL_INIT_VIDEO);
     TTF_Init();
@@ -441,8 +350,9 @@ int main(int argc, char *argv[]) {
             } else if (event.type == SDL_MOUSEBUTTONDOWN && awaitingMove) {
                 int x = event.button.x / SQUARE_SIZE;
                 int y = (event.button.y - 50) / SQUARE_SIZE; // Adjust for the offset due to the text area
-                isWhiteInCheck();
+                /*isWhiteInCheck();
                 isBlackInCheck();
+                isEitherKingInCheck();*/
                 if (srcX == -1 && srcY == -1) {
                     srcX = y;
                     srcY = x;
@@ -460,6 +370,10 @@ int main(int argc, char *argv[]) {
                         printKings();
                         isWhiteInCheck();
                         isBlackInCheck();
+                        srcX = -1;
+                        srcY = -1;
+                        destX = -1;
+                        destY = -1;
                         awaitingMove = false; // Set the flag to false to indicate that move has been made
                         
                     }
@@ -473,10 +387,6 @@ int main(int argc, char *argv[]) {
 
         if (!awaitingMove) {
             drawBoard(renderer);
-            if (isCheckmate()) {
-                printf("Checkmate! %s wins!\n", (currentPlayer == 'W') ? "Black" : "White");
-                break;
-            }
             awaitingMove = true; // Set the flag to true to indicate that game is awaiting a move again
             
         }
