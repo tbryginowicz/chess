@@ -151,7 +151,6 @@ bool isValidMove(int srcX, int srcY, int destX, int destY, int status) {
                         }
                         
                     }
-                
                 return true;
             }
             break;
@@ -454,6 +453,12 @@ bool helperCheckFunction(int srcX, int srcY, int destX, int destY) {
     switch (tolower(piece)) {
     case 'p': {
         int dir = (piece == 'P') ? -1 : 1;
+        if(dest == 'k'){
+            if(board[destX+1][destY-1] == 'P' || board[destX+1][destY+1] == 'P') return true;
+        }
+        if(dest == 'K'){
+            if(board[destX-1][destY-1] == 'p' || board[destX-1][destY+1] == 'p') return true;
+        }
         if ((destX == srcX + dir && destY == srcY && dest == ' ') ||
             (destX == srcX + dir && abs(destY - srcY) == 1 && isOpponentPiece(dest)) ||
             (piece == 'P' && srcX == 6 && destX == 4 && destY == srcY && board[5][srcY] == ' ' && dest == ' ') ||
@@ -666,7 +671,12 @@ void incrementEnPassant(){
         }
     }
 }
-
+void promote(){
+    for (int j = 0; j < 8; j++){
+        if(board[0][j] == 'P') board[0][j] = 'Q';
+        if(board[7][j] == 'p') board[7][j] = 'q';
+    }
+}
 int main(int argc, char *argv[]) {
     char *filename;
     if (argc > 1) {
@@ -729,6 +739,7 @@ int main(int argc, char *argv[]) {
                         findKings();
                     } else {
                         incrementEnPassant();
+                        promote();
                         switchPlayer();
                         awaitingMove = false;
                         
