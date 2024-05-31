@@ -6,6 +6,25 @@ Całość napisana w C, interfejs graficzny zaimplementowany z wykorzystaniem bi
 
 Uruchomienie programu bez argumentów włącza nową rozgrywkę, lub jako argument można podać zapisaną wcześniej grę (np. ./chess board_state)
 
+
+<h2>Instalacja</h2>
+Do uruchomienia gry potrzebna jest biblioteka SDL i SDL_ttf:
+ <br><br>
+
+```
+sudo apt-get install libSDL2-2.0
+
+sudo apt-get install libsdl2-ttf-2.0-0
+```
+
+Pobrać skompilowany plik i oba fonty z releases i umieścic je w tym samym folderze
+```
+chmod +x chess
+```
+```
+./chess
+```
+
 <h2>Przykładowe funkcje</h2>
 
 <h3>Szach mat</h3>
