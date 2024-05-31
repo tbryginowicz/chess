@@ -396,7 +396,7 @@ void drawBoard(SDL_Renderer *renderer) {
             if ((i + j) % 2 == 0) {
                 SDL_SetRenderDrawColor(renderer, 20, 107, 45, 255); //zielony
             } else {
-                SDL_SetRenderDrawColor(renderer, 151, 163, 124, 255); //niebieski
+                SDL_SetRenderDrawColor(renderer, 151, 163, 124, 255); //kremowy
             }
             SDL_RenderFillRect(renderer, &rect);
 
@@ -677,6 +677,13 @@ void promote(){
         if(board[7][j] == 'p') board[7][j] = 'q';
     }
 }
+//Co ruch sprawdza czy na pozycjach startowych stoją wieże, żeby uniknąć sytuacji gdzie wieża nigdy się nie ruszyła i została zbita, a na jej miejsce została podstawiona druga wieża, która mogła robić za nią roszadę (????)
+void checkForInsaneRookPlay(){
+    if(board[0][0] != 'r') blackLeftRookMoved = true;
+    if(board[0][7] != 'r') blackRightRookMoved = true;
+    if(board[7][0] != 'R') whiteLeftRookMoved = true;
+    if(board[7][7] != 'R') whiteRightRookMoved = true;
+}
 int main(int argc, char *argv[]) {
     char *filename;
     if (argc > 1) {
@@ -741,6 +748,7 @@ int main(int argc, char *argv[]) {
                         incrementEnPassant();
                         promote();
                         switchPlayer();
+                        checkForInsaneRookPlay();
                         awaitingMove = false;
                         
                     }
