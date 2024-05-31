@@ -18,6 +18,8 @@ sudo apt-get install libsdl2-ttf-2.0-0
 ```
 
 Pobrać skompilowany plik i oba fonty z releases i umieścic je w tym samym folderze
+
+Dodać uprawienia i uruchomić
 ```
 chmod +x chess
 ```
