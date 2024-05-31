@@ -6,7 +6,7 @@ Całość napisana w C, interfejs graficzny zaimplementowany z wykorzystaniem bi
 
 Uruchomienie programu bez argumentów włącza nową rozgrywkę, lub jako argument można podać zapisaną wcześniej grę (np. ./chess board_state)
 
-<h2></h2>Przykładowe funkcje
+<h2>Przykładowe funkcje</h2>
 
 <h3>Szach mat</h3>
 <img src="https://i.imgur.com/O9kYG4h.gif">
