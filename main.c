@@ -313,7 +313,7 @@ void switchPlayer() {
     currentPlayer = (currentPlayer == 'W') ? 'B' : 'W';
 }
 
-//funkcja do tworzenia nowych nazw savea (board_state_n.txt)
+//funkcja do tworzenia nowych nazw savea (board_state_n)
 char *getUniqueFilename(const char *baseFilename, char *uniqueFilename) {
     char tempFilename[256]; // Zakładam maksymalną długość nazwy pliku
     strcpy(tempFilename, baseFilename);
@@ -322,7 +322,7 @@ char *getUniqueFilename(const char *baseFilename, char *uniqueFilename) {
     int counter = 0;
     while (access(tempFilename, F_OK) == 0) {
         counter++;
-        sprintf(tempFilename, "%s_%d.txt", baseFilename, counter);
+        sprintf(tempFilename, "%s_%d", baseFilename, counter);
     }
 
     strcpy(uniqueFilename, tempFilename);
@@ -748,6 +748,7 @@ int main(int argc, char *argv[]) {
             
         }
         flag:
+        if(true){}
     }
      if (gameOver && !stalemate) {
         const char *winnerColor = (currentPlayer == 'W') ? "BLACK" : "WHITE";
