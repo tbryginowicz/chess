@@ -25,16 +25,6 @@ char board[SIZE][SIZE] = {
     {'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'},
     {'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'}
 };
-char xd[SIZE][SIZE] = {
-    {' ', ' ', 'Q', ' ', ' ', 'b', 'n', 'r'},
-    {' ', ' ', ' ', ' ', 'p', ' ', 'p', 'q'},
-    {' ', ' ', ' ', ' ', ' ', 'p', 'k', 'r'},
-    {' ', ' ', ' ', ' ', ' ', ' ', ' ', 'p'},
-    {' ', ' ', ' ', ' ', ' ', ' ', ' ', 'B'},
-    {' ', ' ', ' ', ' ', 'P', ' ', ' ', ' '},
-    {'P', 'P', 'P', 'P', ' ', 'P', 'P', ' '},
-    {'R', 'N', 'B', ' ', 'K', ' ', 'N', 'R'}
-};
 int enPassant[2][SIZE]={{0,0,0,0,0,0,0,0},{0,0,0,0,0,0,0,0}};
 
 char currentPlayer = 'W';
@@ -150,7 +140,16 @@ bool isValidMove(int srcX, int srcY, int destX, int destY, int status) {
                 ((enPassant[currentPlayer == 'W' ? 0 : 1][destY] == 2) && (destX == srcX + dir) && (destY == srcY +1 || destY == srcY -1) && (destX == 2 || destX == 5))
                 ) {
                     if((enPassant[currentPlayer == 'W' ? 0 : 1][destY] == 2) && (destX == srcX + dir) && (destY == srcY +1 || destY == srcY -1&& (destX == 2 || destX == 5))){
-                        board[srcX][destY] = ' ';
+                        if(currentPlayer == 'W' && destX !=5){
+                            board[srcX][destY] = ' ';
+                            return true;
+                        }else if(currentPlayer == 'B' && destX != 2){
+                            board[srcX][destY] = ' ';
+                            return true;
+                        }else{
+                            return false;
+                        }
+                        
                     }
                 
                 return true;
