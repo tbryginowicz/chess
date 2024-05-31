@@ -748,7 +748,6 @@ int main(int argc, char *argv[]) {
             
         }
         flag:
-        if(true){}
     }
      if (gameOver && !stalemate) {
         const char *winnerColor = (currentPlayer == 'W') ? "BLACK" : "WHITE";
