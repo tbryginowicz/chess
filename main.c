@@ -147,9 +147,9 @@ bool isValidMove(int srcX, int srcY, int destX, int destY, int status) {
                 (destX == srcX + dir && abs(destY - srcY) == 1 && isOpponentPiece(dest)) || 
                 (piece == 'P' && srcX == 6 && destX == 4 && destY == srcY && board[5][srcY] == ' ' && dest == ' ') || 
                 (piece == 'p' && srcX == 1 && destX == 3 && destY == srcY && board[2][srcY] == ' ' && dest == ' ') || 
-                ((enPassant[currentPlayer == 'W' ? 0 : 1][destY] == 2) && (destX == srcX + dir) && (destY == srcY +1 || destY == srcY -1))
+                ((enPassant[currentPlayer == 'W' ? 0 : 1][destY] == 2) && (destX == srcX + dir) && (destY == srcY +1 || destY == srcY -1) && (destX == 2 || destX == 5))
                 ) {
-                    if((enPassant[currentPlayer == 'W' ? 0 : 1][destY] == 2) && (destX == srcX + dir) && (destY == srcY +1 || destY == srcY -1)){
+                    if((enPassant[currentPlayer == 'W' ? 0 : 1][destY] == 2) && (destX == srcX + dir) && (destY == srcY +1 || destY == srcY -1&& (destX == 2 || destX == 5))){
                         board[srcX][destY] = ' ';
                     }
                 
@@ -158,13 +158,17 @@ bool isValidMove(int srcX, int srcY, int destX, int destY, int status) {
             break;
         }
         case 'r':
+
+            if(srcX != destX && srcY != destY) return false;
             
-            if((srcX == destX || srcY == destY) && isPathClear(srcX, srcY, destX, destY) && (board[srcX][srcY] == 'r' || board[srcX][srcY] == 'R')){
-                if (srcX == 7 && srcY == 0) whiteLeftRookMoved = true;
-                if (srcX == 7 && srcY == 7) whiteRightRookMoved = true;
-                if ((srcX == 0 && srcY == 0) && (board[0][0] != 'r')) blackLeftRookMoved = true;
-                if (srcX == 0 && srcY == 7 && (board[0][7] != 'r')) blackRightRookMoved = true;
-                return true;
+            if(srcX == destX || srcY == destY){ 
+                if(isPathClear(srcX, srcY, destX, destY)){
+                    if (srcX == 7 && srcY == 0) whiteLeftRookMoved = true;
+                    if (srcX == 7 && srcY == 7) whiteRightRookMoved = true;
+                    if ((srcX == 0 && srcY == 0) && (board[0][0] != 'r')) blackLeftRookMoved = true;
+                    if (srcX == 0 && srcY == 7 && (board[0][7] != 'r')) blackRightRookMoved = true;
+                    return true;
+                }
             }
         case 'n':
             return (xDiff == 2 && yDiff == 1) || (xDiff == 1 && yDiff == 2);
@@ -288,8 +292,7 @@ bool movePiece(int srcX, int srcY, int destX, int destY) {
     if (isValidMove(srcX, srcY, destX, destY, 1)) {
         board[destX][destY] = board[srcX][srcY];
         if(board[srcX][srcY] == 'p' || board[srcX][srcY] == 'P'){
-            printf("%d",srcY);
-            enPassant[currentPlayer == 'W' ? 1 : 0][srcY] += 1;
+            enPassant[currentPlayer == 'W' ? 1 : 0][srcY] += enPassant[currentPlayer == 'W' ? 1 : 0][srcY] > 6 ? 0 : 1;
         }
         board[srcX][srcY] = ' ';
         
@@ -658,20 +661,10 @@ void loadBoard(const char *filename, char board[][SIZE]) {
 void incrementEnPassant(){
     for(int i = 0; i < 2; i++){
         for (int j = 0; j < 8; j++){
-            if (enPassant[i][j] != 0){
+            if (enPassant[i][j] > 0 && enPassant[i][j] < 7){
                 enPassant[i][j] += 1;
             }
         }
-    }
-}
-//DEBUG: DELETE LATER
-void printEnPassant(){
-    for(int i = 0; i < 2; i++){
-        printf("[");
-        for (int j = 0; j < 8; j++){
-            printf("%d ",enPassant[i][j]);
-        }
-        printf("]\n");
     }
 }
 
@@ -698,7 +691,7 @@ int main(int argc, char *argv[]) {
     bool gameOver = false;
     bool stalemate = false;
     while (!quit && !gameOver) {
-        
+        isCheckMate();
         if (isCheckMate()) {
             const char *winnerColor = (currentPlayer == 'W') ? "WHITE" : "BLACK";
             gameOver = true;
@@ -718,9 +711,7 @@ int main(int argc, char *argv[]) {
                 
                 int x = event.button.x / SQUARE_SIZE;
                 int y = (event.button.y - 50) / SQUARE_SIZE;
-                printf("Clicked at (dest x %d, dest y %d)\n", y, x);
                 if (event.button.x >= WINDOW_WIDTH - 110 && event.button.x <= WINDOW_WIDTH - 50 && event.button.y  >= 10 && event.button.y  <= 40) {
-                    printf("cello\n");
                     saveBoard("board_state", board, currentPlayer);
                     printf("Game state saved!\n");
                     goto flag;
@@ -739,7 +730,6 @@ int main(int argc, char *argv[]) {
                         findKings();
                     } else {
                         incrementEnPassant();
-                        printEnPassant();
                         switchPlayer();
                         awaitingMove = false;
                         
